@@ -13,15 +13,16 @@ import java.util.Random;
  * experiments can be performed to compute average distances.
  */
 public class RandomWalk {
-
+    
     /**
      * Method to compute the distance from the origin (the lamp-post where the drunkard starts) to his current position.
      *
      * @return the (Euclidean) distance from the origin to the current position.
      */
-    public double distance() {
+    
+   public double distance() {
         // TO BE IMPLEMENTED 
-         return 0.0;
+         return Math.sqrt(x * x + y * y);
         // END SOLUTION
     }
 
@@ -33,7 +34,9 @@ public class RandomWalk {
      */
     private void move(int dx, int dy) {
         // TO BE IMPLEMENTED  do move
-         throw new RuntimeException("Not implemented");
+         //throw new RuntimeException("Not implemented");
+         x = x+dx;
+         y= y+dy;
         // END SOLUTION
     }
 
@@ -44,7 +47,11 @@ public class RandomWalk {
      */
     private void randomWalk(int m) {
         // TO BE IMPLEMENTED 
-throw new RuntimeException("implementation missing");
+        //throw new RuntimeException("implementation missing");
+        for ( int steps=0; steps<m; steps++){
+            randomMove();
+        }
+        
     }
 
     /**
@@ -57,8 +64,8 @@ throw new RuntimeException("implementation missing");
         move(ns ? step : 0, ns ? 0 : step);
     }
 
-    private int x = 0;
-    private int y = 0;
+    private long x = 0;
+    private long y = 0;
 
     private final Random random = new Random();
 
@@ -89,6 +96,7 @@ throw new RuntimeException("implementation missing");
      *             and args[1] optionally specifies the number of experiments (default is 30).
      *             If args is empty, the method throws a RuntimeException indicating invalid syntax.
      */
+    /** Use the below main class to run the experiment with custom inputs for steps and number of experiments
     public static void main(String[] args) {
         if (args.length == 0)
             throw new RuntimeException("Syntax: RandomWalk steps [experiments]");
@@ -98,4 +106,16 @@ throw new RuntimeException("implementation missing");
         double meanDistance = randomWalkMulti(m, n);
         System.out.println(m + " steps: " + meanDistance + " over " + n + " experiments");
     }
+    */
+    public static void main(String[] args) {
+        int[] m = {10, 20, 50, 100, 200, 500, 700, 800, 1000};  
+        int n = 10;
+        
+        System.out.println("m\tMean Distance(d)");
+        for (int steps : m) {
+            double meanDistance = randomWalkMulti(steps, n);
+            System.out.printf("%d\t%.5f%n", steps, meanDistance); 
+        }
+    }
+    
 }
