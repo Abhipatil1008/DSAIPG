@@ -4,9 +4,12 @@
 
 package com.phasmidsoftware.dsaipg.adt.threesum;
 
+import com.phasmidsoftware.dsaipg.util.Stopwatch;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Implementation of ThreeSum which follows the approach of dividing the solution-space into
@@ -50,9 +53,57 @@ public class ThreeSumQuadratic implements ThreeSum {
      List<Triple> getTriples(int j) {
          List<Triple> triples = new ArrayList<>();
         // TO BE IMPLEMENTED  : for each candidate, test if a[i] + a[j] + a[k] = 0.
-throw new RuntimeException("implementation missing");
+        
+        int left = 0, right = length - 1;
+        while (left < j && right > j) {
+            int sum = a[left] + a[j] + a[right];
+            if (sum == 0) {
+                triples.add(new Triple(a[left], a[j], a[right]));
+                left++;
+                right--;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return triples;
+        //throw new RuntimeException("implementation missing");
     }
 
     private final int[] a;
     private final int length;
+    
+    /* Adding main method to test custom arrays of different sizes N. I am also, sorting the arrays before passing
+    it to the ThreeSumQuadratic constructor.  
+    */
+    public static void main(String[] args) {
+        int[] N = {250, 500, 1000, 2000, 4000}; // Array sizes to test
+        int m = 1000; 
+
+        System.out.println("N, ThreeSumQuadratic (ms)");
+
+        for (int n : N) {
+            int[] input = generateRandomArray(n, m); 
+            Arrays.sort(input); 
+            long timeQuadrithmic = timeThreeSumQuadratic(input);
+            System.out.printf("%d, %d%n", n, timeQuadrithmic);
+        }
+    }
+    
+    private static int[] generateRandomArray(int n, int m) {
+        Random random = new Random();
+        int[] array = new int[n];
+        for (int i = 0; i < n; i++) {
+            array[i] = random.nextInt(2 * m) - m; 
+        }
+        return array;
+    }
+    
+    private static long timeThreeSumQuadratic(int[] input) {
+        try (Stopwatch stopwatch = new Stopwatch()) {
+            new ThreeSumQuadratic(input).getTriples(); 
+            return stopwatch.lap(); 
+        }
+    }
 }

@@ -4,10 +4,12 @@
 
 package com.phasmidsoftware.dsaipg.adt.threesum;
 
+import com.phasmidsoftware.dsaipg.util.Stopwatch;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Implementation of ThreeSum which follows the simple optimization of
@@ -63,9 +65,50 @@ class ThreeSumQuadrithmic implements ThreeSum {
     Triple getTriple(int i, int j) {
         // TO BE IMPLEMENTED  : use binary search to find the third element
         // END SOLUTION
+        int sum = a[i] + a[j];
+        int k = Arrays.binarySearch(a, j + 1, length, -sum);
+        if (k > j) {
+            return new Triple(a[i], a[j], a[k]);
+        }
+        
         return null;
+        
     }
 
     private final int[] a;
     private final int length;
+    
+    /* Adding main method to test custom arrays of different sizes N. I am also, sorting the arrays before passing
+    it to the ThreeSumQuadrithmic constructor.  
+    */
+    public static void main(String[] args) {
+        int[] N = {250, 500, 1000, 2000, 4000}; // Array sizes to test
+        int m = 1000; 
+
+        System.out.println("N, ThreeSumQuadrithmic (ms)");
+
+        for (int n : N) {
+            int[] input = generateRandomArray(n, m); 
+            Arrays.sort(input); 
+            long timeQuadrithmic = timeThreeSumQuadrithmic(input);
+            System.out.printf("%d, %d%n", n, timeQuadrithmic);
+        }
+    }
+    
+    private static int[] generateRandomArray(int n, int m) {
+        Random random = new Random();
+        int[] array = new int[n];
+        for (int i = 0; i < n; i++) {
+            array[i] = random.nextInt(2 * m) - m; 
+        }
+        return array;
+    }
+    
+    private static long timeThreeSumQuadrithmic(int[] input) {
+        try (Stopwatch stopwatch = new Stopwatch()) {
+            new ThreeSumQuadrithmic(input).getTriples(); 
+            return stopwatch.lap(); 
+        }
+    }
+    
 }
