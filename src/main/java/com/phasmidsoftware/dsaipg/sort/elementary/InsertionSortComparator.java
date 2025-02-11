@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.util.Comparator;
 
 import static com.phasmidsoftware.dsaipg.sort.InstrumentedComparatorHelper.getRunsConfig;
+import com.phasmidsoftware.dsaipg.util.Benchmark_Timer;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.function.Supplier;
 
 /**
  * A class for performing insertion sort using a comparator, extending functionality from SortWithHelper.
@@ -64,9 +68,17 @@ public class InsertionSortComparator<X> extends SortWithHelper<X> {
      */
     public void sort(X[] xs, int from, int to) {
         final Helper<X> helper = getHelper();
-
+        
         // TO BE IMPLEMENTED 
-throw new RuntimeException("implementation missing");
+        //throw new RuntimeException("implementation missing");
+    for (int i = from + 1; i < to; i++) {
+        for (int j = i; j > from; j--) {
+            
+            if (!helper.swapStableConditional(xs, j)) {
+                break; // Stopping when the correct position is found
+            }
+        }
+    }
     }
 
     public static final String DESCRIPTION = "Insertion sort";
@@ -112,6 +124,73 @@ throw new RuntimeException("implementation missing");
             sorter.sort(ts, true);
             return helper.getFixes();
         }
+    }
+    
+    public static void main(String[] args) {
+
+        String[] orderTypes = {"Random", "Ordered", "Partially-Ordered", "Reverse-Ordered"};
+        int[] sizes = {1000, 2000, 4000, 8000, 16000};
+
+
+        Comparator<Integer> comparator = Integer::compareTo;
+
+
+        Config config =null;
+        try{
+             config = Config.load(InsertionSortComparator.class);
+        }catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        
+        for (String orderType : orderTypes) {
+            System.out.println("\nBenchmarking InsertionSortComparator for: " + orderType);
+
+            for (int n : sizes) {
+                // Generating an array based on ordering type
+                Integer[] array = generateArray(n, orderType);
+
+                //System.out.println("Array :" + Arrays.toString(array));
+
+                InsertionSortComparator<Integer> sorter = new InsertionSortComparator<>(comparator, n, 1, config);
+
+
+                Benchmark_Timer<Integer[]> benchmarkTimer = new Benchmark_Timer<>(
+                        "InsertionSortComparator " + orderType,
+                        arr -> sorter.sort(arr, 0, arr.length)
+                );
+
+
+                Supplier<Integer[]> arraySupplier = () -> Arrays.copyOf(array, array.length);
+
+                // Running the benchmark with supplier function
+                double timeTaken = benchmarkTimer.runFromSupplier(arraySupplier, 10);
+
+
+                System.out.printf("Array Size: %d, Time Taken: %.6f ms%n", n, timeTaken);
+            }
+        }
+    }
+
+    private static Integer[] generateArray(int n, String orderType) {
+        Integer[] array = new Integer[n];
+        Random random = new Random();
+
+        switch (orderType) {
+            case "Random":
+                for (int i = 0; i < n; i++) array[i] = random.nextInt(10000);
+                break;
+            case "Ordered":
+                for (int i = 0; i < n; i++) array[i] = i;
+                break;
+            case "Partially-Ordered":
+                for (int i = 0; i < n; i++) array[i] = i;
+                for (int i = 0; i < n / 10; i++) array[random.nextInt(n)] = random.nextInt(10000);
+                break;
+            case "Reverse-Ordered":
+                for (int i = 0; i < n; i++) array[i] = n - i;
+                break;
+        }
+        return array;
     }
 
 }
