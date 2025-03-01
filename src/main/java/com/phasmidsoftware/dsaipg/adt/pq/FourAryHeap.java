@@ -5,7 +5,7 @@ import java.util.*;
 public class FourAryHeap<K> extends PriorityQueue<K> {
     private final boolean maxHeap;
     private final Comparator<? super K> comparator;
-    private final List<K> heap;  // Backing array for the heap
+    private final List<K> heap;
 
     public FourAryHeap(int capacity, Comparator<? super K> comparator, boolean maxHeap, boolean useFloydsTrick) {
         super(capacity, (Comparator<K>) comparator);
@@ -13,7 +13,7 @@ public class FourAryHeap<K> extends PriorityQueue<K> {
         this.comparator = comparator;
         this.heap = new ArrayList<>(capacity);
         if (useFloydsTrick) {
-            buildHeap();  // Implement this method to apply Floyd’s trick
+            buildHeap();
         }
     }
 

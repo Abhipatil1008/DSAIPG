@@ -297,7 +297,6 @@ public class PriorityQueue<K> implements Iterable<K> {
           benchmarkPQ("4-ary Heap", new FourAryHeap<>(i, comparator, false, false));
           benchmarkPQ("4-ary Heap with Floyd's Trick", new FourAryHeap<>(i, comparator, true, true));
 
-          // Optional: Fibonacci Heap (Bonus)
           // benchmarkPQ("Fibonacci Heap", new FibonacciHeap<>()
       }
     }
