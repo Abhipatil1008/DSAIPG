@@ -4,6 +4,9 @@
 
 package com.phasmidsoftware.dsaipg.adt.pq;
 
+import com.phasmidsoftware.dsaipg.util.Benchmark_Timer;
+import com.phasmidsoftware.dsaipg.util.Stopwatch;
+
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -243,7 +246,7 @@ public class PriorityQueue<K> implements Iterable<K> {
     /**
      * Get the index of the parent of the element at index k
      */
-    private int parent(int k) {
+    protected int parent(int k) {
         return (k + 1 - first) / 2 + first - 1;
     }
 
@@ -251,7 +254,7 @@ public class PriorityQueue<K> implements Iterable<K> {
      * Get the index of the first child of the element at index k.
      * The index of the second child will be one greater than the result.
      */
-    private int firstChild(int k) {
+    protected int firstChild(int k) {
         return (k + 1 - first) * 2 + first - 1;
     }
 
@@ -260,7 +263,7 @@ public class PriorityQueue<K> implements Iterable<K> {
      */
 
     @SuppressWarnings("unused")
-    private K peek(int k) {
+    public K peek(int k) {
         return binHeap[k];
     }
 
@@ -276,8 +279,53 @@ public class PriorityQueue<K> implements Iterable<K> {
     private int last; // number of elements in the binary heap
     private final boolean floyd; //Determine whether floyd's snake method is on or off inside the take method
 
-    public static void main(String[] args) {
-        doMain();
+    private static final int NUM_INSERTS = 16000;
+    private static final int NUM_REMOVES = 4000;
+    private static final int MAX_ELEMENTS = 4095;
+    private static final int[] M = {4095, 8191, 16383, 32767};
+
+    public static void main(String[] args) throws PQException {
+
+        //doMain();
+        Comparator<Integer> comparator = Integer::compare;
+
+      for (int i : M) {
+          System.out.println("\nBenchmarking Priority Queue Implementations for size: " + i);
+
+          benchmarkPQ("Basic Binary Heap", new PriorityQueue<>(i, true, comparator, false));
+          benchmarkPQ("Binary Heap with Floyd's Trick", new PriorityQueue<>(i, true, comparator, true));
+          benchmarkPQ("4-ary Heap", new FourAryHeap<>(i, comparator, false, false));
+          benchmarkPQ("4-ary Heap with Floyd's Trick", new FourAryHeap<>(i, comparator, true, true));
+
+          // Optional: Fibonacci Heap (Bonus)
+          // benchmarkPQ("Fibonacci Heap", new FibonacciHeap<>()
+      }
+    }
+
+    private static void benchmarkPQ(String name, PriorityQueue<Integer> pq) throws PQException {
+        Random rand = new Random();
+        System.out.println("\nStarting: " + name);
+
+        try (Stopwatch sw = new Stopwatch()) {
+            // Insert 16,000 random elements
+            for (int i = 0; i < NUM_INSERTS; i++) {
+                pq.give(rand.nextInt(1000000));
+            }
+            long insertTime = sw.lap();
+
+            // Remove 4,000 elements and track max priority removed
+            int maxPriority = Integer.MIN_VALUE;
+            for (int i = 0; i < NUM_REMOVES; i++) {
+                maxPriority = Math.max(maxPriority, pq.take());
+            }
+            long removeTime = sw.lap();
+            long totalTime = removeTime + insertTime;
+            System.out.println(name + " - Insert Time: " + insertTime + " ms, Remove Time: " + removeTime + "ms, Total Operation time: " + totalTime + " ms, Max Priority Removed: " + maxPriority);
+        }
+    }
+
+    protected int getFirst() {
+        return first;
     }
 
     /**
