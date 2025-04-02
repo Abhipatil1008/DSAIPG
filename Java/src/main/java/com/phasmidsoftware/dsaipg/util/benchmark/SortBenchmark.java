@@ -12,6 +12,8 @@ import com.phasmidsoftware.dsaipg.sort.generic.SortException;
 import com.phasmidsoftware.dsaipg.sort.generic.SortWithComparableHelper;
 import com.phasmidsoftware.dsaipg.sort.generic.SortWithHelper;
 import com.phasmidsoftware.dsaipg.sort.helper.Helper;
+import com.phasmidsoftware.dsaipg.sort.helper.HelperFactory;
+import com.phasmidsoftware.dsaipg.sort.helper.InstrumentedComparableHelper;
 import com.phasmidsoftware.dsaipg.sort.helper.NonInstrumentingComparableHelper;
 import com.phasmidsoftware.dsaipg.sort.linearithmic.*;
 import com.phasmidsoftware.dsaipg.util.config.Config;
@@ -118,6 +120,11 @@ public class SortBenchmark {
             runIntegerBucketSort((int) N, estimateRuns(totalWork * 2, N));
         if (isConfigBenchmarkIntegerSorter("quicksort"))
             runIntegerQuickSort((int) N, 10 * estimateRuns(totalWork, Math.log(N) * N));
+            //runIntegerQuickSort((int) N);
+        if (isConfigBenchmarkIntegerSorter("heapsort"))
+            runIntegerHeapSort((int) N, estimateRuns(totalWork, Math.log(N) * N));
+        if (isConfigBenchmarkIntegerSorter("mergesort"))
+            runIntegerMergeSort((int) N, estimateRuns(totalWork, Math.log(N) * N));
     }
 
     /**
@@ -210,7 +217,7 @@ public class SortBenchmark {
             }
 
         if (isConfigBenchmarkStringSorter("quicksortDualPivot") && nRunsLinearithmic > 0)
-            try (SortWithHelper<String> sorter = new QuickSort_DualPivot<>(nWords, nRunsLinearithmic, config)) {
+            try (SortWithHelper<String> sorter = new QuickSort_DualPivot<>(nWords,config)) {
                 runStringSortBenchmark(words, nWords, nRunsLinearithmic * 4, sorter, timeLoggersLinearithmic);
             }
 
@@ -279,7 +286,7 @@ public class SortBenchmark {
      * @param args the command-line arguments.
      */
     void doMain(String[] args) {
-        sortStrings(getWordCounts(args));
+        //sortStrings(getWordCounts(args));
         sortIntegers(getWordCounts(args));
     }
 
@@ -388,10 +395,59 @@ public class SortBenchmark {
      * @param runs the number of sorting operations to be performed for benchmarking purposes.
      */
     private void runIntegerQuickSort(int N, final int runs) {
-        SortWithHelper<Integer> sorter = new QuickSort_DualPivot<>(N, runs, config);
+        Helper<Integer> helper = HelperFactory.create("QuickSort", N, isInstrumented(config), config);
+
+        //QuickSort_DualPivot<Integer> sorter = new QuickSort_DualPivot<>(helper);
+        SortWithHelper<Integer> sorter = new QuickSort_DualPivot<>(N, config);
+        //Integer[] numbers = sorter.getHelper().random(Integer.class, Random::nextInt);
+        Integer[] numbers = sorter.getHelper().random(N, Integer.class, Random::nextInt);
+        System.out.println("Helper is instance of: " + helper.getClass().getSimpleName());
+        System.out.println("helper.instrumented() = " + helper.instrumented());
+        //sorter.sort(numbers);
+        //System.out.println("Sample data: " + Arrays.toString(Arrays.copyOf(numbers, 10)));
+        runIntegerSortBenchmark(numbers, N, runs, sorter, sorter::preProcess, timeLoggersLinearithmic);
+        if (helper instanceof InstrumentedComparableHelper<Integer> instrumentedHelper) {
+            System.out.println("comparisons: " + instrumentedHelper.getCompares());
+            System.out.println("swaps: " + instrumentedHelper.getSwaps());
+            System.out.println("hits: " + instrumentedHelper.getHits());
+            System.out.println("copies: " + instrumentedHelper.getCopies());
+            instrumentedHelper.close();
+        }
+    }
+    private void runIntegerMergeSort(int N, final int runs) {
+        Helper<Integer> helper = HelperFactory.create("MergeSort", N, isInstrumented(config), config);
+        if (helper instanceof InstrumentedComparableHelper) {
+            InstrumentedComparableHelper<Integer> instrumentedHelper = (InstrumentedComparableHelper<Integer>) helper;
+            System.out.println("comparisons: " + instrumentedHelper.getCompares());
+            System.out.println("swaps: " + instrumentedHelper.getSwaps());
+            System.out.println("hits: " + instrumentedHelper.getHits());
+            System.out.println("copies: " + instrumentedHelper.getCopies());
+            instrumentedHelper.close();
+        }
+        MergeSort<Integer> sorter = new MergeSort<>(helper);
         Integer[] numbers = sorter.getHelper().random(Integer.class, Random::nextInt);
+        System.out.println("Helper is instance of: " + helper.getClass().getSimpleName());
+        System.out.println("helper.instrumented() = " + helper.instrumented());
         runIntegerSortBenchmark(numbers, N, runs, sorter, sorter::preProcess, timeLoggersLinearithmic);
     }
+    private void runIntegerHeapSort(int N, final int runs) {
+        Helper<Integer> helper = HelperFactory.create("HeapSort", N, isInstrumented(config), config);
+        if (helper instanceof InstrumentedComparableHelper) {
+            InstrumentedComparableHelper<Integer> instrumentedHelper = (InstrumentedComparableHelper<Integer>) helper;
+            System.out.println("comparisons: " + instrumentedHelper.getCompares());
+            System.out.println("swaps: " + instrumentedHelper.getSwaps());
+            System.out.println("hits: " + instrumentedHelper.getHits());
+            System.out.println("copies: " + instrumentedHelper.getCopies());
+            instrumentedHelper.close();
+        }
+        HeapSort<Integer> sorter = new HeapSort<>(helper);
+        Integer[] numbers = sorter.getHelper().random(Integer.class, Random::nextInt);
+        System.out.println("Helper is instance of: " + helper.getClass().getSimpleName());
+        System.out.println("helper.instrumented() = " + helper.instrumented());
+        runIntegerSortBenchmark(numbers, N, runs, sorter, sorter::preProcess, timeLoggersLinearithmic);
+    }
+
+
 
     /**
      * Sorts strings based on various benchmark configurations and performs
@@ -455,6 +511,14 @@ public class SortBenchmark {
         try (Stopwatch stopwatch = new Stopwatch()) {
             runStringSortBenchmark(words, nWords, nRuns, sorter, sorter::preProcess, timeLoggers);
             logger.info("************************************************************ (" + stopwatch.lap() / 1000.0 + " sec.)");
+            Helper<String> helper = sorter.getHelper();
+            if (helper instanceof InstrumentedComparableHelper<String> instrumentedHelper) {
+                System.out.println("comparisons: " + instrumentedHelper.getCompares());
+                System.out.println("swaps: " + instrumentedHelper.getSwaps());
+                System.out.println("hits: " + instrumentedHelper.getHits());
+                System.out.println("copies: " + instrumentedHelper.getCopies());
+                instrumentedHelper.close();
+            }
         }
     }
 
