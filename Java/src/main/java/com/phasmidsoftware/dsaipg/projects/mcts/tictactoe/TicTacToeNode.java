@@ -50,20 +50,31 @@ public class TicTacToeNode implements Node<TicTacToe> {
      *
      * @param state the State for the new chile.
      */
+    @Override
     public void addChild(State<TicTacToe> state) {
         children.add(new TicTacToeNode(state));
+    }
+    public TicTacToeNode addChildAndReturn(State<TicTacToe> state) {
+        TicTacToeNode child = new TicTacToeNode(state);
+        children.add(child);
+        return child;
     }
 
     /**
      * This method sets the number of wins and playouts according to the children states.
      */
-    public void backPropagate() {
-        playouts = 0;
-        wins = 0;
-        for (Node<TicTacToe> child : children) {
-            wins += child.wins();
-            playouts += child.playouts();
+    public void backPropagate(double result) {
+        visits++;
+        playouts++;
+        if (result == 1.0) {
+            wins += 2;
+        } else if (result == 0.5) {
+            wins += 1;
         }
+    }
+    @Override
+    public void backPropagate() {
+        backPropagate(0.5); // default behavior
     }
 
     /**
@@ -80,9 +91,17 @@ public class TicTacToeNode implements Node<TicTacToe> {
         return playouts;
     }
 
+    public int getVisits() {
+        return visits;
+    }
+
+
     public TicTacToeNode(State<TicTacToe> state) {
         this.state = state;
         children = new ArrayList<>();
+        visits = 0;
+        playouts = 0;
+        wins = 0;
         initializeNodeData();
     }
 
@@ -107,4 +126,5 @@ public class TicTacToeNode implements Node<TicTacToe> {
 
     private int wins;
     private int playouts;
+    private int visits;
 }
