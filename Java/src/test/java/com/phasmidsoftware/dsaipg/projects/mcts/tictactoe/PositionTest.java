@@ -149,4 +149,28 @@ public class PositionTest {
         Position target = Position.parsePosition("X . .\n. O .\n. . X", 1);
         assertEquals("1,-1,-1\n-1,0,-1\n-1,-1,1", target.toString());
     }
+    @Test
+    public void testWinByRow() {
+        Position position = Position.parsePosition("X X X\n. . .\n. . .", 1);
+        assertTrue(position.threeInARow());
+    }
+
+    @Test
+    public void testWinByColumn() {
+        Position position = Position.parsePosition("X . .\nX . .\nX . .", 1);
+        assertTrue(position.threeInARow());
+    }
+
+    @Test
+    public void testDraw() {
+        Position position = Position.parsePosition("X O X\nX O O\nO X X", 1);
+        assertTrue(position.full());
+        assertFalse(position.winner().isPresent());
+    }
+    @Test(expected = RuntimeException.class)
+    public void testIllegalMove() {
+        Position position = Position.parsePosition("X . .\n. . .\n. . .", -1);
+        position.move(0, 0, 0); // cell already occupied
+    }
+
 }

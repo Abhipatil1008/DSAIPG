@@ -52,11 +52,11 @@ public class TicTacToeNode implements Node<TicTacToe> {
      */
     @Override
     public void addChild(State<TicTacToe> state) {
-        children.add(new TicTacToeNode(state, this)); // ✅ Updated: pass parent
+        children.add(new TicTacToeNode(state, this));
     }
 
     public TicTacToeNode addChildAndReturn(State<TicTacToe> state) {
-        TicTacToeNode child = new TicTacToeNode(state, this); // ✅ Updated: pass parent
+        TicTacToeNode child = new TicTacToeNode(state, this);
         children.add(child);
         return child;
     }
@@ -99,7 +99,7 @@ public class TicTacToeNode implements Node<TicTacToe> {
 
     public TicTacToeNode(State<TicTacToe> state, TicTacToeNode parent) {
         this.state = state;
-        this.parent = parent; // ✅ Store parent
+        this.parent = parent;
         this.children = new ArrayList<>();
         this.visits = 0;
         this.playouts = 0;
@@ -131,7 +131,7 @@ public class TicTacToeNode implements Node<TicTacToe> {
 
     private final State<TicTacToe> state;
     private final ArrayList<Node<TicTacToe>> children;
-    private final TicTacToeNode parent; // ✅ Added parent reference
+    private final TicTacToeNode parent;
     private int wins;
     private int playouts;
     private int visits;

@@ -257,6 +257,20 @@ public class Position {
         };
     }
 
+    public int[][] toMatrix() {
+        return copyGrid();
+    }
+
+    public int count() {
+        return this.count;
+    }
+
+    public static Position clonePositionResetLast(Position position, int newLast) {
+        return new Position(position.toMatrix(), position.count(), newLast);
+    }
+
+
+
     /**
      * TESTME
      *

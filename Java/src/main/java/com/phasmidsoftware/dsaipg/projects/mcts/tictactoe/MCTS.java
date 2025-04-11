@@ -68,7 +68,7 @@ public class MCTS {
             State<TicTacToe> newState = node.state().next(move);
             boolean exists = node.children().stream().anyMatch(child -> child.state().equals(newState));
             if (!exists) {
-                return ((TicTacToeNode) node).addChildAndReturn(newState); // parent tracked internally
+                return ((TicTacToeNode) node).addChildAndReturn(newState);
             }
         }
         return node;
@@ -81,8 +81,14 @@ public class MCTS {
         while (!state.isTerminal()) {
             List<Move<TicTacToe>> moves = new ArrayList<>(state.moves(currentPlayer));
             if (moves.isEmpty()) break;
-            Collections.shuffle(moves);
-            state = state.next(moves.get(0));
+            Move<TicTacToe> chosenMove = moves.stream()
+                    .filter(m -> Arrays.equals(((TicTacToe.TicTacToeMove) m).move(), new int[]{1, 1}))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        Collections.shuffle(moves);
+                        return moves.get(0);
+                    });
+            state = state.next(chosenMove);
             currentPlayer = 1 - currentPlayer;
         }
         Optional<Integer> winner = state.winner();
@@ -121,5 +127,18 @@ public class MCTS {
                 c -> ((TicTacToeNode) c).wins() / (double) (((TicTacToeNode) c).playouts() + 1e-6)
         )).orElseThrow();
     }
+
+    public State<TicTacToe> runMCTS(int simulations) {
+        for (int i = 0; i < simulations; i++) {
+            Node<TicTacToe> selected = select(root);
+            Node<TicTacToe> expanded = expand(selected);
+            double result = simulate(expanded);
+            backpropagate(expanded, result);
+        }
+        Node<TicTacToe> best = bestChild(root);
+        root = best;
+        return best.state();
+    }
+
 
 }
