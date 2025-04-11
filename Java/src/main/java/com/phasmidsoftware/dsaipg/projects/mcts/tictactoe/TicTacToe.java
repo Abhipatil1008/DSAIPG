@@ -16,10 +16,6 @@ public class TicTacToe implements Game<TicTacToe> {
      * @param args command-line arguments.
      */
     public static void main(String[] args) {
-        // NOTE the behavior of the game to be run will be based on the TicTacToe instance field: random.
-        //State<TicTacToe> state = new TicTacToe().runGame();
-        //if (state.winner().isPresent()) System.out.println("TicTacToe: winner is: " + state.winner().get());
-        //else System.out.println("TicTacToe: draw");
         Scanner scanner = new Scanner(System.in);
         boolean playAgain = true;
         while (playAgain) {
@@ -43,18 +39,7 @@ public class TicTacToe implements Game<TicTacToe> {
                         System.out.println("Invalid input: " + e.getMessage());
                         continue;
                     }
-                } else { // AI using MCTS
-                    //MCTS mcts = new MCTS(new TicTacToeNode(state));
-                    state = mcts.runMCTS(); //reusing the tree
-                    /*State<TicTacToe> blockingMove = blockImmediateWin(state);
-                    if (blockingMove != null) {
-                        System.out.println("AI blocked your winning move!");
-                        state = blockingMove;
-                        mcts.updateRoot(state); // keep MCTS tree in sync
-                    } else {
-                        state = mcts.runMCTS(); // normal MCTS decision
-                        System.out.println("AI played:");
-                    }*/
+                } else {
                     System.out.println("AI played:");
                 }
                 player = 1 - player;

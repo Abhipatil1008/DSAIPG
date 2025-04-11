@@ -48,14 +48,15 @@ public class TicTacToeNode implements Node<TicTacToe> {
     /**
      * Method to add a child to this Node.
      *
-     * @param state the State for the new chile.
+     * @param state the State for the new child.
      */
     @Override
     public void addChild(State<TicTacToe> state) {
-        children.add(new TicTacToeNode(state));
+        children.add(new TicTacToeNode(state, this)); // ✅ Updated: pass parent
     }
+
     public TicTacToeNode addChildAndReturn(State<TicTacToe> state) {
-        TicTacToeNode child = new TicTacToeNode(state);
+        TicTacToeNode child = new TicTacToeNode(state, this); // ✅ Updated: pass parent
         children.add(child);
         return child;
     }
@@ -72,21 +73,16 @@ public class TicTacToeNode implements Node<TicTacToe> {
             wins += 1;
         }
     }
+
     @Override
     public void backPropagate() {
         backPropagate(0.5); // default behavior
     }
 
-    /**
-     * @return the score for this Node and its descendents a win is worth 2 points, a draw is worth 1 point.
-     */
     public int wins() {
         return wins;
     }
 
-    /**
-     * @return the number of playouts evaluated (including this node). A leaf node will have a playouts value of 1.
-     */
     public int playouts() {
         return playouts;
     }
@@ -97,11 +93,17 @@ public class TicTacToeNode implements Node<TicTacToe> {
 
 
     public TicTacToeNode(State<TicTacToe> state) {
+        this(state, null);
+    }
+
+
+    public TicTacToeNode(State<TicTacToe> state, TicTacToeNode parent) {
         this.state = state;
-        children = new ArrayList<>();
-        visits = 0;
-        playouts = 0;
-        wins = 0;
+        this.parent = parent; // ✅ Store parent
+        this.children = new ArrayList<>();
+        this.visits = 0;
+        this.playouts = 0;
+        this.wins = 0;
         initializeNodeData();
     }
 
@@ -121,9 +123,15 @@ public class TicTacToeNode implements Node<TicTacToe> {
         }
     }
 
+
+
+    public Node<TicTacToe> getParent() {
+        return parent;
+    }
+
     private final State<TicTacToe> state;
     private final ArrayList<Node<TicTacToe>> children;
-
+    private final TicTacToeNode parent; // ✅ Added parent reference
     private int wins;
     private int playouts;
     private int visits;
