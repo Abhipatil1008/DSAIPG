@@ -97,10 +97,10 @@ public class Position {
         int[][] matrix = copyGrid();
         switch (axis) {
             case 0:
-                for (int j = 0; j < gridSize; j++) swap(matrix, 0, j, 2, j); // middle row
+                for (int j = 0; j < gridSize; j++) swap(matrix, 0, j, 2, j);
                 break;
             case 1:
-                for (int i = 0; i < gridSize; i++) swap(matrix, i, 0, i, 2); // middle column
+                for (int i = 0; i < gridSize; i++) swap(matrix, i, 0, i, 2);
                 break;
             default:
                 throw new RuntimeException("reflect not implemented for " + axis);

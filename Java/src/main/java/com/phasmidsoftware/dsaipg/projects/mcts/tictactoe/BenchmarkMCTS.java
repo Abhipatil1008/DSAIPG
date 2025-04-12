@@ -29,10 +29,10 @@ public class BenchmarkMCTS {
                     if (player == TicTacToe.X) {
                         List<Move<TicTacToe>> moves = new ArrayList<>(state.moves(player));
                         Collections.shuffle(moves);
-                        state = state.next(moves.get(0));  // Simulating human
+                        state = state.next(moves.get(0));
                         mcts.updateRoot(state);
                     } else {
-                        state = mcts.runMCTS(sim); // You need to create this overloaded method
+                        state = mcts.runMCTS(sim);
                     }
                     moveCount++;
                     player = 1 - player;

@@ -34,7 +34,7 @@ public class TicTacToe implements Game<TicTacToe> {
                         continue;
                     }
                 } else {
-                    // ✅ 1. Try to win if possible
+
                     State<TicTacToe> winningMove = TicTacToe.findImmediateWin(state);
                     if (winningMove != null) {
                         System.out.println("AI played winning move!");
@@ -44,7 +44,7 @@ public class TicTacToe implements Game<TicTacToe> {
                         continue;
                     }
 
-                    // ✅ 2. Try to block
+
                     State<TicTacToe> blockingMove = TicTacToe.blockImmediateWin(state);
                     if (blockingMove != null) {
                         System.out.println("AI blocked your winning move!");
@@ -54,7 +54,7 @@ public class TicTacToe implements Game<TicTacToe> {
                         continue;
                     }
 
-                    // ✅ 3. Fallback to MCTS
+
                     state = mcts.runMCTS();
                     System.out.println("AI played:");
                 }
@@ -196,7 +196,6 @@ public class TicTacToe implements Game<TicTacToe> {
         private final Position position;
     }
 
-    // ✅ AI tries to block human's winning move
     public static State<TicTacToe> blockImmediateWin(State<TicTacToe> state) {
         int aiPlayer = state.player();
         int humanPlayer = 1 - aiPlayer;
@@ -225,7 +224,6 @@ public class TicTacToe implements Game<TicTacToe> {
         return null;
     }
 
-    // ✅ AI tries to win immediately
     public static State<TicTacToe> findImmediateWin(State<TicTacToe> state) {
         int aiPlayer = state.player();
         for (Move<TicTacToe> move : state.moves(aiPlayer)) {

@@ -76,7 +76,7 @@ public class TicTacToeNode implements Node<TicTacToe> {
 
     @Override
     public void backPropagate() {
-        backPropagate(0.5); // default behavior
+        backPropagate(0.5);
     }
 
     public int wins() {

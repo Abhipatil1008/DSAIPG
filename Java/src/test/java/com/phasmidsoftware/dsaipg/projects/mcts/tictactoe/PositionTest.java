@@ -170,7 +170,7 @@ public class PositionTest {
     @Test(expected = RuntimeException.class)
     public void testIllegalMove() {
         Position position = Position.parsePosition("X . .\n. . .\n. . .", -1);
-        position.move(0, 0, 0); // cell already occupied
+        position.move(0, 0, 0);
     }
 
 }
