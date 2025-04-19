@@ -24,14 +24,14 @@ public class GameState {
 
     // Goal state: all on right bank
     public boolean isGoal() {
-        System.out.println("🎯 Called from: " + Thread.currentThread().getStackTrace()[2]);
+        //System.out.println("Called from: " + Thread.currentThread().getStackTrace()[2]);
         boolean goal = priestsLeft == 0 && devilsLeft == 0 && priestsRight == 3 && devilsRight == 3 && !boatOnLeft;
         if (goal) {
-            System.out.println("🎯 Goal condition met!");
+            System.out.println("Goal condition met!");
         } else {
-            System.out.println("🔍 Goal check failed. Current state: "
-                    + "Left(" + priestsLeft + "P " + devilsLeft + "D), "
-                    + "Right(" + priestsRight + "P " + devilsRight + "D)");
+            //System.out.println("Current state: "
+            //        + "Left(" + priestsLeft + "P " + devilsLeft + "D), "
+            //        + "Right(" + priestsRight + "P " + devilsRight + "D)");
         }
         return goal;
     }

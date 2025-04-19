@@ -8,7 +8,7 @@ public class PlayGame {
         GameState state = GameState.initialState();
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("🎮 Welcome to Priests and Devils - Human Mode");
+        System.out.println("Welcome to Priests and Devils - Human Mode");
         state.render();
 
         while (!state.isGoal()) {
@@ -21,7 +21,7 @@ public class PlayGame {
             GameState newState = state.move(p, d);
 
             if (newState == null || !newState.isValid()) {
-                System.out.println("❌ Invalid move! Try again.");
+                System.out.println("Invalid move! Try again.");
                 continue;
             }
 
@@ -29,7 +29,7 @@ public class PlayGame {
             state.render();
 
             if (state.isGoal()) {
-                System.out.println("🎉 Congrats! You solved the puzzle!");
+                System.out.println("Congrats! You solved the puzzle!");
                 break;
             }
         }

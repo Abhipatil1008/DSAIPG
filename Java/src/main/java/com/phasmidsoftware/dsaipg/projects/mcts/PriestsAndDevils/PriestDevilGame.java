@@ -26,8 +26,8 @@ public class PriestDevilGame implements Game<PriestDevilGame> {
         PriestDevilNode root = new PriestDevilNode(startState);
 
         PriestDevilMCTS mcts = new PriestDevilMCTS(root);
-        System.out.println("Initial valid moves: " +
-                MoveGenerator.generateNextStates(GameState.initialState()).size());
+        //System.out.println("Initial valid moves: " +
+                //MoveGenerator.generateNextStates(GameState.initialState()).size());
 
         System.out.println("Starting puzzle:");
         startState.unwrap().render();
@@ -41,35 +41,35 @@ public class PriestDevilGame implements Game<PriestDevilGame> {
             State<PriestDevilGame> returnedState = mcts.runMCTS(startState);  // ✅ Use exact returned state
             MCTPriestDevilState nextState = (MCTPriestDevilState) returnedState;
             GameState unwrappedNext = nextState.unwrap();
-            System.out.println("🧩 Main got state: " + unwrappedNext + " | isGoal? " + unwrappedNext.isGoal());
-            System.out.println("🧩 Main loop got state: " + unwrappedNext + " | Hash: " + unwrappedNext.hashCode());
+            //System.out.println("Main got state: " + unwrappedNext + " | isGoal? " + unwrappedNext.isGoal());
+            //System.out.println("Main loop got state: " + unwrappedNext + " | Hash: " + unwrappedNext.hashCode());
 
             if (unwrappedNext.isGoal()) {
-                System.out.println("✅ Puzzle Solved!");
+                System.out.println("Puzzle Solved!");
                 unwrappedNext.render();
                 break;
             }
 
             for (Node<PriestDevilGame> child : mcts.root.children()) {
                 GameState childState = ((MCTPriestDevilState) child.state()).unwrap();
-                System.out.println("   🔁 Child: " + childState + " | Hash: " + childState.hashCode());
-                if (childState.equals(unwrappedNext)) {
-                    System.out.println("🟩 Main's state == child's state: MATCH ✅");
-                } else {
-                    System.out.println("🟥 Main's state != child's state: ❌");
-                }
+                //System.out.println("   Child: " + childState + " | Hash: " + childState.hashCode());
+                //if (childState.equals(unwrappedNext)) {
+                //    System.out.println("Main's state == child's state: MATCH ");
+                //} else {
+                //    System.out.println("Main's state != child's state: ");
+                //}
             }
 
             int priestsMoved = Math.abs(startState.unwrap().priestsLeft - unwrappedNext.priestsLeft);
             int devilsMoved = Math.abs(startState.unwrap().devilsLeft - unwrappedNext.devilsLeft);
-            System.out.println("🚣 Boat moved with: P: " + priestsMoved + ", D: " + devilsMoved);
+            //System.out.println("Boat moved with: P: " + priestsMoved + ", D: " + devilsMoved);
             unwrappedNext.render();
 
             if (!unwrappedNext.isValid()) {
-                System.out.println("❌ Priests eaten! Invalid state.");
+                //System.out.println("Priests eaten! Invalid state.");
                 break;
             } else if (visited.contains(unwrappedNext)) {
-                System.out.println("♻️ Loop detected. Terminating.");
+                //System.out.println("Loop detected. Terminating.");
                 break;
             }
 
