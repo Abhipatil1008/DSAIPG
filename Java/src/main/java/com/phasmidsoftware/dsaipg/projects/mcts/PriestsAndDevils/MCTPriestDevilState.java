@@ -30,8 +30,8 @@ public class MCTPriestDevilState implements State<PriestDevilGame> {
 
     @Override
     public Optional<Integer> winner() {
-        if (state.isGoal()) return Optional.of(0);      // Win
-        if (!state.isValid()) return Optional.of(1);    // Loss
+        if (state.isGoal()) return Optional.of(0);
+        if (!state.isValid()) return Optional.of(1);
         return Optional.empty();
     }
 
@@ -70,7 +70,7 @@ public class MCTPriestDevilState implements State<PriestDevilGame> {
 
     @Override
     public Random random() {
-        return new Random(); // or keep a static one if preferred
+        return new Random();
     }
 
 }

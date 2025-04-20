@@ -45,11 +45,9 @@ public class PriestDevilNode implements Node<PriestDevilGame> {
 
     @Override
     public void backPropagate() {
-        // Default behavior if no result provided (e.g., treat as draw)
         backPropagate(0.5);
     }
 
-    // Custom scoring logic used by MCTS
     public void backPropagate(double result) {
         playouts++;
         wins += result;

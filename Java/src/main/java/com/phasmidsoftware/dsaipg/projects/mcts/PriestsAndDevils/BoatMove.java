@@ -14,8 +14,7 @@ public class BoatMove implements Move<PriestDevilGame> {
 
     @Override
     public int player() {
-        return 0; // single-player puzzle
-    }
+        return 0; }
 
     @Override
     public String toString() {

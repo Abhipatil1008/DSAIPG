@@ -48,31 +48,29 @@ public class PriestDevilMCTS {
             backpropagate(expanded, result);
         }
         //System.out.println("Number of children of root: " + rootNode.children().size());
-        // Check all children of root for GOAL state
         //System.out.println("Checking for GOAL state among children...");
         for (Node<PriestDevilGame> child : rootNode.children()) {
             GameState gs = ((MCTPriestDevilState) child.state()).unwrap();
             //System.out.println("  Child: " + gs + " | Goal? " + gs.isGoal() + " | Hash: " + gs.hashCode());
             if (gs.isGoal()) {
                 //System.out.println("MCTS found GOAL state as child! Returning it to main.");
-                root = child;                      // Set correct root
-                return child.state();              // Return that state to main
+                root = child;
+                return child.state();
             }
         }
 
 
 
-        // 🛠 Fallback: Best child by win rate
+
         List<Node<PriestDevilGame>> children = new ArrayList<>(rootNode.children());
         if (children.isEmpty()) {
-            //throw new RuntimeException("No children to choose from.");
         }
 
         Node<PriestDevilGame> best = children.stream()
                 .filter(c -> !((MCTPriestDevilState)c.state()).unwrap().equals(GameState.initialState()))
                 .max(Comparator.comparingDouble(n ->
                         n.playouts() == 0 ? 0.0 : (double) n.wins() / n.playouts()))
-                .orElse(children.get(0)); // fallback even if all are initial state
+                .orElse(children.get(0));
 
 
         GameState bestState = ((MCTPriestDevilState) best.state()).unwrap();
@@ -81,8 +79,8 @@ public class PriestDevilMCTS {
             //System.out.println("Fallback best child IS the goal.");
         //}
 
-        root = new PriestDevilNode(best.state()); // ensure a fresh node
-        return root.state();                      // root and returned state are always in sync
+        root = new PriestDevilNode(best.state());
+        return root.state();
     }
 
 
@@ -103,7 +101,7 @@ public class PriestDevilMCTS {
             return node;
         }
         List<Move<PriestDevilGame>> moveList = new ArrayList<>(possibleMoves);
-        Collections.shuffle(moveList);  // 💡 shuffle to avoid picking same move every time
+        Collections.shuffle(moveList);
         Set<GameState> visited = new HashSet<>();
         for (Move<PriestDevilGame> move : moveList) {
             System.out.println("\nTrying move: " + move);
@@ -121,14 +119,14 @@ public class PriestDevilMCTS {
                 continue;
             }
 
-            visited.add(raw); // only mark visited if it's valid
+            visited.add(raw);
 
             if (raw.isGoal()) {
                 PriestDevilNode child = new PriestDevilNode(newState);
                 node.children().add(child);
                 //System.out.println(" Expanded GOAL state: " + raw);
                 raw.render();
-                return child;  // Early return if goal is found
+                return child;
             }
 
             boolean exists = node.children().stream().anyMatch(c -> c.state().equals(newState));
@@ -136,7 +134,7 @@ public class PriestDevilMCTS {
                 PriestDevilNode child = new PriestDevilNode(newState);
                 node.children().add(child);
 
-                //  Extra log if this is a goal state
+
                 //if (raw.isGoal()) {
                     //System.out.println("GOAL state added to children: " + raw);
                 //}
@@ -144,12 +142,12 @@ public class PriestDevilMCTS {
                 //System.out.println("Expanded with move: " + move);
                 raw.render();
 
-                // Return first valid child as before
+
                 return child;
             }
         }
 
-        return node; // No expansion happened, return same node
+        return node;
     }
 
 
@@ -169,7 +167,7 @@ public class PriestDevilMCTS {
             GameState current = ((MCTPriestDevilState) state).unwrap();
             if (current.isGoal()) return 1.0;
 
-            // Detect loops
+
             if (visitedStates.contains(current)) {
                 //System.out.println("Detected loop during simulation.");
                 break;
@@ -201,7 +199,7 @@ public class PriestDevilMCTS {
     private Node<PriestDevilGame> bestUCT(Node<PriestDevilGame> node) {
         Random rand = new Random();
         List<Node<PriestDevilGame>> children = new ArrayList<>(node.children());
-        Collections.shuffle(children); // helps break ties randomly
+        Collections.shuffle(children);
 
         return children.stream().max(Comparator.comparingDouble(
                 c -> (c.wins() / (double) (c.playouts() + 1e-6)) +

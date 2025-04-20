@@ -18,7 +18,7 @@ public class PriestDevilGame implements Game<PriestDevilGame> {
 
     @Override
     public int opener() {
-        return 0; // only one player
+        return 0;
     }
 
     public static void main(String[] args) {
@@ -26,8 +26,6 @@ public class PriestDevilGame implements Game<PriestDevilGame> {
         PriestDevilNode root = new PriestDevilNode(startState);
 
         PriestDevilMCTS mcts = new PriestDevilMCTS(root);
-        //System.out.println("Initial valid moves: " +
-                //MoveGenerator.generateNextStates(GameState.initialState()).size());
 
         System.out.println("Starting puzzle:");
         startState.unwrap().render();
@@ -38,11 +36,9 @@ public class PriestDevilGame implements Game<PriestDevilGame> {
 
         while (true) {
             System.out.println("\nStep " + (++step) + ": Running MCTS...");
-            State<PriestDevilGame> returnedState = mcts.runMCTS(startState);  // ✅ Use exact returned state
+            State<PriestDevilGame> returnedState = mcts.runMCTS(startState);
             MCTPriestDevilState nextState = (MCTPriestDevilState) returnedState;
             GameState unwrappedNext = nextState.unwrap();
-            //System.out.println("Main got state: " + unwrappedNext + " | isGoal? " + unwrappedNext.isGoal());
-            //System.out.println("Main loop got state: " + unwrappedNext + " | Hash: " + unwrappedNext.hashCode());
 
             if (unwrappedNext.isGoal()) {
                 System.out.println("Puzzle Solved!");

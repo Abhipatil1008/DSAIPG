@@ -17,12 +17,12 @@ public class GameState {
         this.boatOnLeft = boatOnLeft;
     }
 
-    // Initial state: all on left bank, boat on left
+
     public static GameState initialState() {
         return new GameState(3, 3, 0, 0, true);
     }
 
-    // Goal state: all on right bank
+
     public boolean isGoal() {
         //System.out.println("Called from: " + Thread.currentThread().getStackTrace()[2]);
         boolean goal = priestsLeft == 0 && devilsLeft == 0 && priestsRight == 3 && devilsRight == 3 && !boatOnLeft;
@@ -37,7 +37,7 @@ public class GameState {
     }
 
 
-    // Check that priests are never outnumbered by devils
+
     public boolean isValid() {
         if (priestsLeft < 0 || devilsLeft < 0 || priestsRight < 0 || devilsRight < 0) return false;
         if (priestsLeft > 0 && devilsLeft > priestsLeft) return false;
@@ -45,14 +45,13 @@ public class GameState {
         return true;
     }
 
-    // Generate a new state by moving priests and devils across the river
+
     public GameState move(int priestsToMove, int devilsToMove) {
         if (priestsToMove + devilsToMove < 1 || priestsToMove + devilsToMove > 2) {
             return null; // Boat must carry 1 or 2 passengers
         }
 
         if (boatOnLeft) {
-            // Move from left to right
             return new GameState(
                     priestsLeft - priestsToMove,
                     devilsLeft - devilsToMove,
@@ -61,7 +60,6 @@ public class GameState {
                     false
             );
         } else {
-            // Move from right to left
             return new GameState(
                     priestsLeft + priestsToMove,
                     devilsLeft + devilsToMove,
